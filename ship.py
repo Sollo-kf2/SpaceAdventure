@@ -14,7 +14,9 @@ class Ship(Sprite):
         self.screen = screen
         self.screen_rect = screen.get_rect()
 
-        self.speed = 1.5
+        self.acceleration = 0.06
+        self.speed = 0
+        self.max_speed = 3
         self.angle_speed = 1
         self.current_direction = [0, -1]
         self.current_angle = 0
@@ -45,15 +47,19 @@ class Ship(Sprite):
     def update_direction(self):
         self.current_direction[0] = math.sin(math.radians(self.current_angle))
         self.current_direction[1] = math.cos(math.radians(self.current_angle))
-        print(self.current_direction, " ", self.current_angle)
         
+    def is_speed_max(self):
+        if self.speed > self.max_speed:
+            self.speed = self.max_speed
+            return True
+        elif self.speed < -self.max_speed:
+            self.speed = -self.max_speed
+            return True
+        return False
 
     def update(self):
         """Update the ship's position based on the movement flag."""
 
-        # if not self.rect.colliderect(self.screen_rect):
-        #     return
-        print(self.rect.top, " ", self.image.get_rect().top)
         if self.rotate_right or self.rotate_left:
             if self.rotate_right:
                 self.current_angle = (self.current_angle - self.angle_speed) % 360
@@ -63,18 +69,23 @@ class Ship(Sprite):
             self.image = rotate(self.original, self.current_angle)
             self.rect = self.image.get_rect(center=self.rect.center)
 
-
-        # if self.moving_right and self.rect.right < self.screen_rect.right:
-        #     self.centerx += self.speed
-        # if self.moving_left and self.rect.left > 0:
-        #     self.centerx -= self.speed
         self.update_direction()
 
+        if (self.moving_up or self.moving_down) and not self.is_speed_max():
+            if self.moving_up:
+                self.speed -= self.acceleration
+                
+            if self.moving_down:
+                self.speed += self.acceleration
+        elif self.speed:
+            if self.speed >= -0.001 and self.speed <= 0.001:
+                self.speed = 0
+            elif self.speed > 0:
+                self.speed -= self.acceleration
+            elif self.speed < 0:
+                self.speed += self.acceleration
 
-        if self.moving_up:
-            self.centery += self.speed * -self.current_direction[1]
-            self.centerx += self.speed * -self.current_direction[0]
-        if self.moving_down:
+        if self.speed:
             self.centery += self.speed * self.current_direction[1]
             self.centerx += self.speed * self.current_direction[0]
 
