@@ -51,18 +51,14 @@ def update_screen(ai_settings, screen, ship, bullets, aliens):
 
     screen.blit(ai_settings.bg, ai_settings.bg_rect)
     ship.blitme()
-    aliens.draw(screen)
+    
+    for alien in aliens:
+        alien.draw()
 
-    for bullet in bullets.sprites():
-        bullet.blitme()
+    bullets.draw(screen)
     
     pygame.display.flip()
 
-def update_bullets(bullets):
-    for bullet in bullets.copy():
-        if bullet.rect.bottom <= 0:
-            bullets.remove(bullet)
-    bullets.update()
 
 def fire_bullet(screen, ship, bullets):
     new_bullet = Bullet(screen, ship)

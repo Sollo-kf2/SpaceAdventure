@@ -14,9 +14,9 @@ class Ship(Sprite):
         self.screen = screen
         self.screen_rect = screen.get_rect()
 
-        self.acceleration = 0.06
+        self.acceleration = 0.05
         self.speed = 0
-        self.max_speed = 3
+        self.max_speed = 2
         self.angle_speed = 1
         self.current_direction = [0, -1]
         self.current_angle = 0
@@ -59,7 +59,7 @@ class Ship(Sprite):
 
     def update(self):
         """Update the ship's position based on the movement flag."""
-
+        print(self.speed)
         if self.rotate_right or self.rotate_left:
             if self.rotate_right:
                 self.current_angle = (self.current_angle - self.angle_speed) % 360
@@ -78,7 +78,7 @@ class Ship(Sprite):
             if self.moving_down:
                 self.speed += self.acceleration
         elif self.speed:
-            if self.speed >= -0.001 and self.speed <= 0.001:
+            if self.speed >= -self.acceleration and self.speed <= self.acceleration:
                 self.speed = 0
             elif self.speed > 0:
                 self.speed -= self.acceleration

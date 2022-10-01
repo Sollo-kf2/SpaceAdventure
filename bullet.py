@@ -1,6 +1,5 @@
 import pygame
 from pygame.sprite import Sprite
-from pygame.transform import rotate
 
 class Bullet(Sprite):
     """A class to manage bullets fired from the ship"""
@@ -14,7 +13,8 @@ class Bullet(Sprite):
         self.bullet_width = 5
         self.bullet_height = 5
         self.color = (255, 10, 10)
-        self.speed = 2
+        self.speed = 4
+        self.damage = 25
 
         self.image = pygame.Surface((self.bullet_width, self.bullet_height), pygame.SRCALPHA).convert_alpha()
         pygame.draw.ellipse(self.image, self.color, (0, 0, self.bullet_width, self.bullet_height))
@@ -36,10 +36,6 @@ class Bullet(Sprite):
     def update(self):
         """Move the bullet up the screen."""
 
-        # Update the decimal position of the bullet.
-        # self.y -= self.speed
-        # Update the rect position.
-
         self.y += self.speed * -self.direction[1]
         self.x += self.speed * -self.direction[0]
 
@@ -55,3 +51,19 @@ class Bullet(Sprite):
 
         self.screen.blit(self.image, self.rect)
         
+def update_bullets(bullets, aliens, settings):
+    for bullet in bullets.copy():
+        if bullet.rect.bottom <= 0 or \
+           bullet.rect.top >= settings.screen_height or \
+           bullet.rect.right <= 0 or \
+           bullet.rect.left >= settings.screen_width:
+            bullets.remove(bullet)
+
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, False)
+    for bul in collisions:
+        if collisions[bul][0].health <= bul.damage:
+            aliens.remove(collisions[bul][0])
+        else:
+            collisions[bul][0].health -= bul.damage 
+
+    bullets.update()
