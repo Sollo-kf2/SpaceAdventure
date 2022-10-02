@@ -4,7 +4,7 @@ import game_functions as gf
 from tkinter.tix import InputOnly
 from settings import Settings
 from ship import Ship
-from alien import Alien
+import bullet as bl
 
 def run_game():
     ai_settings = Settings()
@@ -21,7 +21,7 @@ def run_game():
         gf.check_events(screen, ship, bullets)
         ship.update()
 
-        gf.update_bullets(bullets)
+        bl.update_bullets(bullets, aliens, ai_settings)
 
         gf.update_screen(ai_settings, screen, ship, bullets, aliens)
 
