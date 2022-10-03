@@ -46,7 +46,7 @@ def check_events(screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
-def draw_screen(ai_settings, screen, ship, bullets, aliens):
+def draw_screen(ai_settings, screen, ship, bullets, aliens, asteroids):
     """Update images on the screen and flip to the new screen."""
 
     screen.blit(ai_settings.bg, ai_settings.bg_rect)
@@ -54,6 +54,9 @@ def draw_screen(ai_settings, screen, ship, bullets, aliens):
     
     for alien in aliens:
         alien.draw()
+
+    for ast in asteroids:
+        ast.draw()
 
     bullets.draw(screen)
     

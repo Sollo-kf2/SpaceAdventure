@@ -21,11 +21,9 @@ class Bullet(Sprite):
 
         self.direction = ship.current_direction.copy()
 
-        # self.image = rotate(self.image, ship.current_angle)
         self.rect = self.image.get_rect()
 
         # Create a bullet rect at (0, 0) and then set correct position.
-        # self.rect = pygame.Rect(0, 0, self.bullet_width, self.bullet_height)
         self.rect.centerx = ship.rect.centerx
         self.rect.top = ship.rect.top
 
@@ -41,10 +39,6 @@ class Bullet(Sprite):
 
         self.rect.x = self.x
         self.rect.y = self.y
-
-    # def draw_bullet(self):
-    #     """Draw the bullet to the screen."""
-    #     pygame.draw.rect(self.screen, self.color, self.rect)
 
     def blitme(self):
         """Draw the alien at its current location."""

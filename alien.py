@@ -26,6 +26,7 @@ class Alien(Sprite):
         self.health = 500
         self.max_health = 500
         self.health_height = 5
+        self.health_bar_shift = 6
 
         # Start each new alien near the top left of the screen.
         self.rect.x = self.rect.width
@@ -41,8 +42,8 @@ class Alien(Sprite):
         
         fill = (self.health / self.max_health) * self.rect.width
 
-        outline_rect = pygame.Rect(self.rect.left, self.rect.top + 5, self.rect.width, self.health_height)
-        fill_rect = pygame.Rect(self.rect.left, self.rect.top + 5, fill, self.health_height)
+        outline_rect = pygame.Rect(self.rect.left, self.rect.top - self.health_bar_shift, self.rect.width, self.health_height)
+        fill_rect = pygame.Rect(self.rect.left, self.rect.top - self.health_bar_shift, fill, self.health_height)
 
         pygame.draw.rect(self.screen, THECOLORS['red'], fill_rect)
         pygame.draw.rect(self.screen, THECOLORS['white'], outline_rect, 1)
@@ -55,8 +56,8 @@ class Alien(Sprite):
 
 def create_fleet(ai_settings, screen, aliens):
     """Create a full fleet of aliens."""
-
-    alien = Alien(ai_settings, screen)
+    
+    alien = Alien(ai_settings, screen) #костыль
     alien_width = alien.rect.width
     available_space_x = ai_settings.screen_width - 2 * alien_width
     number_aliens_x = int(available_space_x / (2 * alien_width))
