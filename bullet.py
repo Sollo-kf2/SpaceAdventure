@@ -67,3 +67,7 @@ def update_bullets(bullets, aliens, settings):
             collisions[bul][0].health -= bul.damage 
 
     bullets.update()
+
+def fire_bullet(screen, ship, bullets):
+    new_bullet = Bullet(screen, ship)
+    bullets.add(new_bullet)
