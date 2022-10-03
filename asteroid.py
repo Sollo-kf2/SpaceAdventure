@@ -27,7 +27,7 @@ class Asteroid(Sprite):
         self.rect.centery = ypos
 
         self.health = 50
-        self.max_health = 500
+        self.max_health = 50
         self.health_height = 5
         self.health_bar_shift = 6
 
@@ -63,7 +63,7 @@ class Asteroid(Sprite):
         self.screen.blit(self.image, self.rect)
         self.draw_health_bar()
 
-def update_asteroids(asters, settings, screen):
+def update_asteroids(ship, asters, settings, screen):
     if len(asters) == 0:
         ast = Asteroid(settings, screen, 0, 0) #костыль
         generate_asters(settings, screen, asters, ast.rect.width, ast.rect.height)
@@ -71,6 +71,14 @@ def update_asteroids(asters, settings, screen):
     for aster in asters.copy():
         if aster.rect.top >= settings.screen_width:
             asters.remove(aster)
+
+    collide = pygame.sprite.spritecollide(ship, asters, False)
+    for ast in collide:
+        if ship.health <= ast.damage:
+            print("wasted")
+        else:
+            ship.health -= ast.damage
+        asters.remove(ast)
     
     asters.update()
 

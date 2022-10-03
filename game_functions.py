@@ -18,7 +18,7 @@ def check_keydown_events(event, screen, ship, bullets):
         ship.rotate_left = True
 
     if event.key == pygame.K_SPACE:
-        bullet.fire_bullet(screen, ship, bullets)
+        ship.shooting = True
 
 def check_keyup_events(event, ship):
     if event.key == pygame.K_e:
@@ -34,6 +34,9 @@ def check_keyup_events(event, ship):
         ship.rotate_right = False
     if event.key == pygame.K_a:
         ship.rotate_left = False
+
+    if event.key == pygame.K_SPACE:
+        ship.shooting = False
 
 def check_events(screen, ship, bullets):
     """Respond to keypresses and mouse events."""

@@ -45,7 +45,7 @@ class Bullet(Sprite):
 
         self.screen.blit(self.image, self.rect)
         
-def update_bullets(bullets, aliens, settings):
+def update_bullets(bullets, aliens, settings, asters, ship):
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0 or \
            bullet.rect.top >= settings.screen_height or \
@@ -57,6 +57,15 @@ def update_bullets(bullets, aliens, settings):
     for bul in collisions:
         if collisions[bul][0].health <= bul.damage:
             aliens.remove(collisions[bul][0])
+            ship.score += 1
+        else:
+            collisions[bul][0].health -= bul.damage
+
+    collisions = pygame.sprite.groupcollide(bullets, asters, True, False)
+    for bul in collisions:
+        if collisions[bul][0].health <= bul.damage:
+            asters.remove(collisions[bul][0])
+            ship.score += 1
         else:
             collisions[bul][0].health -= bul.damage 
 

@@ -5,6 +5,7 @@ from pygame.sprite import Sprite
 import math
 from pygame.color import THECOLORS
 import pygame
+import bullet
 
 class Ship(Sprite):
 
@@ -47,8 +48,29 @@ class Ship(Sprite):
         self.moving_up = False
         self.moving_down = False
 
+        self.shooting = False
+
         self.rotate_right = False
         self.rotate_left = False
+
+        self.health = 50
+        self.max_health = 50
+        self.health_height = 5
+        self.health_bar_shift = 6
+
+        self.score = 0
+
+    def draw_health_bar(self):
+        if self.health < 0:
+            self.health = 0
+        
+        fill = (self.health / self.max_health) * self.collideRect.width
+
+        outline_rect = pygame.Rect(self.collideRect.left, self.collideRect.top - self.health_bar_shift, self.collideRect.width, self.health_height)
+        fill_rect = pygame.Rect(self.collideRect.left, self.collideRect.top - self.health_bar_shift, fill, self.health_height)
+
+        pygame.draw.rect(self.screen, THECOLORS['red'], fill_rect)
+        pygame.draw.rect(self.screen, THECOLORS['white'], outline_rect, 1)
         
     def update_direction(self):
         self.current_direction[0] = math.sin(math.radians(self.current_angle))
@@ -119,7 +141,7 @@ class Ship(Sprite):
                 self.rect.centerx = self.centerx
                 self.collideRect.centerx = self.rect.centerx
 
-    def update(self):
+    def update(self, bullets):
         """Update the ship's position based on the movement flag."""
         
         self.update_rotation()
@@ -127,9 +149,13 @@ class Ship(Sprite):
         self.update_speed()
         access_to_move_x, access_to_move_y = self.update_collision_with_map()
         self.update_position(access_to_move_x, access_to_move_y)
+        if self.shooting:
+            bullet.fire_bullet(self.screen, self, bullets)
+        print("SCORE: ", self.score)
 
     def blitme(self):
         """Draw the ship at its current location."""
 
         self.screen.blit(self.image, self.rect)
+        self.draw_health_bar()
         
