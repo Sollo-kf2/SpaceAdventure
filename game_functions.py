@@ -18,7 +18,7 @@ def check_keydown_events(event, screen, ship, bullets):
         ship.rotate_left = True
 
     if event.key == pygame.K_SPACE:
-        bullet.fire_bullet(screen, ship, bullets)
+        ship.shooting = True
 
 def check_keyup_events(event, ship):
     if event.key == pygame.K_e:
@@ -35,6 +35,9 @@ def check_keyup_events(event, ship):
     if event.key == pygame.K_a:
         ship.rotate_left = False
 
+    if event.key == pygame.K_SPACE:
+        ship.shooting = False
+
 def check_events(screen, ship, bullets):
     """Respond to keypresses and mouse events."""
 
@@ -46,7 +49,7 @@ def check_events(screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
-def draw_screen(ai_settings, screen, ship, bullets, aliens):
+def draw_screen(ai_settings, screen, ship, bullets, aliens, asteroids):
     """Update images on the screen and flip to the new screen."""
 
     screen.blit(ai_settings.bg, ai_settings.bg_rect)
@@ -54,6 +57,9 @@ def draw_screen(ai_settings, screen, ship, bullets, aliens):
     
     for alien in aliens:
         alien.draw()
+
+    for ast in asteroids:
+        ast.draw()
 
     bullets.draw(screen)
     
