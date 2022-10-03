@@ -3,13 +3,17 @@ from pygame.transform import smoothscale
 from pygame.transform import rotate
 from pygame.sprite import Sprite
 import math
+from pygame.color import THECOLORS
+import pygame
 
 class Ship(Sprite):
 
-    def __init__(self, screen):
+    def __init__(self, screen, settings):
         """Initialize the ship and set its starting position."""
         
         super(Ship, self).__init__()
+
+        self.settings = settings
 
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -24,7 +28,7 @@ class Ship(Sprite):
         # Load the ship image and get its rect.
         self.image = load('images/ships/Ships3/ship1.png')
         self.rect = self.image.get_rect()
-        self.image = smoothscale(self.image, (self.rect.width / 3, self.rect.height / 3))
+        self.image = smoothscale(self.image, (self.rect.width / 4, self.rect.height / 4))
         self.rect = self.image.get_rect()
 
         self.original = self.image.copy()
@@ -32,6 +36,8 @@ class Ship(Sprite):
         # Start each new ship at the bottom center of the screen.
         self.rect.centerx = self.screen_rect.centerx
         self.rect.bottom = self.screen_rect.bottom - 10
+
+        self.collideRect = self.rect.copy()
 
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
@@ -57,9 +63,7 @@ class Ship(Sprite):
             return True
         return False
 
-    def update(self):
-        """Update the ship's position based on the movement flag."""
-        print(self.speed)
+    def update_rotation(self):
         if self.rotate_right or self.rotate_left:
             if self.rotate_right:
                 self.current_angle = (self.current_angle - self.angle_speed) % 360
@@ -69,8 +73,7 @@ class Ship(Sprite):
             self.image = rotate(self.original, self.current_angle)
             self.rect = self.image.get_rect(center=self.rect.center)
 
-        self.update_direction()
-
+    def update_speed(self):
         if (self.moving_up or self.moving_down) and not self.is_speed_max():
             if self.moving_up:
                 self.speed -= self.acceleration
@@ -84,14 +87,49 @@ class Ship(Sprite):
                 self.speed -= self.acceleration
             elif self.speed < 0:
                 self.speed += self.acceleration
+            
+    def update_collision_with_map(self):
+        # SRiNF = ship's rect in next frame
 
+        SRiNF = self.collideRect.copy()
+        if self.speed != 0:
+            SRiNF.centery += self.speed * self.current_direction[1]
+            SRiNF.centerx += self.speed * self.current_direction[0]
+
+        access_to_move_x = True
+        access_to_move_y = True
+
+        if SRiNF.bottom >= self.settings.screen_height or \
+           SRiNF.top <= 0:
+            access_to_move_y = False
+        if SRiNF.left <= 0 or \
+           SRiNF.right >= self.settings.screen_width:
+            access_to_move_x = False
+
+        return access_to_move_x, access_to_move_y
+
+    def update_position(self, access_to_move_x, access_to_move_y):
         if self.speed:
-            self.centery += self.speed * self.current_direction[1]
-            self.centerx += self.speed * self.current_direction[0]
+            if access_to_move_y:
+                self.centery += self.speed * self.current_direction[1]
+                self.rect.centery = self.centery
+                self.collideRect.centery = self.rect.centery
+            if access_to_move_x:
+                self.centerx += self.speed * self.current_direction[0]
+                self.rect.centerx = self.centerx
+                self.collideRect.centerx = self.rect.centerx
 
-        self.rect.centerx = self.centerx
-        self.rect.centery = self.centery
+    def update(self):
+        """Update the ship's position based on the movement flag."""
+        
+        self.update_rotation()
+        self.update_direction()
+        self.update_speed()
+        access_to_move_x, access_to_move_y = self.update_collision_with_map()
+        self.update_position(access_to_move_x, access_to_move_y)
 
     def blitme(self):
         """Draw the ship at its current location."""
-        self.screen.blit(self.image, self.rect) 
+
+        self.screen.blit(self.image, self.rect)
+        

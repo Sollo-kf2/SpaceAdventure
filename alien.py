@@ -19,11 +19,12 @@ class Alien(Sprite):
         # Load the alien image and set its rect attribute.
         self.image = load('images/ships/Ships1/RD1.png')
         self.rect = self.image.get_rect()
-        self.image = smoothscale(self.image, (self.rect.width / 3, self.rect.height / 3))
+        self.image = smoothscale(self.image, (self.rect.width / 4, self.rect.height / 4))
         self.image = rotate(self.image, 180)
         self.rect = self.image.get_rect()
 
-        self.health = 100
+        self.health = 500
+        self.max_health = 500
         self.health_height = 5
 
         # Start each new alien near the top left of the screen.
@@ -38,7 +39,7 @@ class Alien(Sprite):
         if self.health < 0:
             self.health = 0
         
-        fill = (self.health / 100) * self.rect.width
+        fill = (self.health / self.max_health) * self.rect.width
 
         outline_rect = pygame.Rect(self.rect.left, self.rect.top + 5, self.rect.width, self.health_height)
         fill_rect = pygame.Rect(self.rect.left, self.rect.top + 5, fill, self.health_height)
@@ -51,3 +52,17 @@ class Alien(Sprite):
 
         self.screen.blit(self.image, self.rect)
         self.draw_health_bar()
+
+def create_fleet(ai_settings, screen, aliens):
+    """Create a full fleet of aliens."""
+
+    alien = Alien(ai_settings, screen)
+    alien_width = alien.rect.width
+    available_space_x = ai_settings.screen_width - 2 * alien_width
+    number_aliens_x = int(available_space_x / (2 * alien_width))
+
+    for alien_number in range(number_aliens_x):
+        alien = Alien(ai_settings, screen)
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        aliens.add(alien)
