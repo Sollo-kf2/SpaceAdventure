@@ -26,6 +26,8 @@ def run_game():
         ship.update(bullets)
         
         bl.update_bullets(bullets, aliens, ai_settings, asteroids, ship)
+        
+        gf.update_enemy_state(aliens)
 
         ast.update_asteroids(ship, asteroids, ai_settings, screen)
 
